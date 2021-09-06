@@ -177,26 +177,41 @@ public class DBHelper extends SQLiteOpenHelper {
         return medici;
 
     }
+    //OBTIENE LAS DOSIS DE LOS MEDICAMENTOS
+    public String[] dosis(String med)throws SQLException{
+        openDB();
+        int contador = 0,tamano=0;
+        String medici[] = new String[10];
+        String selection = Droga.CN_nombre + " = ? ";
+        String selectionArgs[] = new String[]{med};
+        Cursor c=myDataBase.query(Dosis.Tabla_dosis,null,selection,selectionArgs,null,null,null);
+        if (c != null) { c.moveToFirst(); }
+        close();
+        while (contador<=9) {
+            if(c.getString(contador)!=null){
+            medici[contador] = c.getString(contador);
+            tamano++;}
+            contador++;
+        }
+        String devol[] = new String[tamano];
+        devol = medici;
 
-    //OBTENER MEDICAMENTOS
+        return devol;
+
+    }
+    //QUITAR BLANCOS
+
+
+    //OBTENER SOLO LOS MEDICAMENTOS
     public String[] todas_medicina() throws SQLException {
         openDB();
-
         int contador = 0;
         String [] campos = {Droga.CN_nombre};
         Cursor c = myDataBase.query(
                 Droga.Tabla_droga,
-                campos,
-                null,
-                null,
-                null,
-                null,
-                null
+                campos, null, null, null, null, null
         );
-
-        if (c != null) {
-            c.moveToFirst();
-        }
+        if (c != null) { c.moveToFirst(); }
         close();
         int tamcursor = c.getCount();
         ArrayList<String> sacados = new ArrayList<>();
@@ -205,7 +220,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 sacados.add(c.getString(0));
             } while (c.moveToNext());
         }
-
         int tamano = sacados.size();
         String medicamentos[] = new String[tamano];
         contador = 0;
@@ -213,10 +227,10 @@ public class DBHelper extends SQLiteOpenHelper {
             medicamentos[contador] = sacados.get(contador);
             contador++;
         }
-
         return medicamentos;
-
     }
+
+
 
 
 }

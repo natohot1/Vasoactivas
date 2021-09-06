@@ -15,6 +15,7 @@ public class Dosis {
     public static String CN_dosis4 = "dosis4";
     public static String CN_tipo_dosis4 = "tipo_dosis4";
     public static String CN_observaciones = "observaciones";
+    public static String Tabla_dosis = "dosis";
 
     //<editor-fold desc="GETTER -SETER">
     public static String getIdMedi2() {
