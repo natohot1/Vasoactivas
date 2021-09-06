@@ -31,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
        SQLiteDatabase db = dbHelper.getWritableDatabase();
         arrayMedicamento = manager.medicina(medBuscado);
+        //listado de solo nombres de medicanentos
         array_medi = manager.todas_medicina();
+        array_Dosis  =manager.dosis(medBuscado);
        inicilizar();
        cantidad = 200;
        cantidadMg = 200;
@@ -95,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                   txtDosis3.setText(String.format(""));
                   medBuscado = array_drogas[1];
               }
-              if (dosisNumero == 2){
+              if (dosisNumero == 4){
                   txtDosis.setText(String.format("%s", array_noradrenalina[0]));
                   txtDosis2.setText(String.format("%s", array_noradrenalina[1]));
                   txtDosis3.setText(String.format(""));
@@ -149,29 +151,33 @@ public class MainActivity extends AppCompatActivity {
         double priDosis = 0;
         double segDosis = 0;
         double terDosis = 0;
-            if(array_Dosis[3]=="ug/min"){
+            if((array_Dosis[3]).equals("ug/min")){
                 //DOSIS NITROGLICERINA EMPEZAR A ESTA DOSIS Y SE PUEDE AUMENTYAR HASTA 10 VECES
                 double dosisPorKilo = Double.valueOf(array_Dosis[2]);
                 priDosis = (dosisPorKilo*cantidad)/ampollaMicroGramos;
             }
-            if(array_Dosis[3]=="ug/kg/min"){
+            if((array_Dosis[3]).equals("ug/kg/min")){
                 double dosis = Double.valueOf(arryMedicamento[2]);
                 priDosis = ((dosis*peso)*60/(ampollaMicroGramos/cantidad));
-                if(array_Dosis[6]=="ug/kg/min"){
-                    double dosis1 = Double.valueOf(arryMedicamento[4]);
-                    segDosis = ((dosis1*peso)*60/(ampollaMicroGramos/cantidad));
-                    if(array_Dosis[8]=="ug/kg/min"){
-                        double dosis2 = Double.valueOf(arryMedicamento[6]);
-                        terDosis = ((dosis2*peso)*60/(ampollaMicroGramos/cantidad));
+                if(array_Dosis[5]!=null) {
+                    if ((array_Dosis[5]).equals("ug/kg/min")) {
+                        double dosis1 = Double.valueOf(arryMedicamento[4]);
+                        segDosis = ((dosis1 * peso) * 60 / (ampollaMicroGramos / cantidad));
+                        if(array_Dosis[7]!=null) {
+                            if ((array_Dosis[7]).equals("ug/kg/min")) {
+                                double dosis2 = Double.valueOf(arryMedicamento[6]);
+                                terDosis = ((dosis2 * peso) * 60 / (ampollaMicroGramos / cantidad));
+                            }
+                        }
                     }
                 }
             }
-            if(array_Dosis[3] =="mg/kg"){
-                double ampollaMg =Double.valueOf(arryMedicamento[3]); //100 oh 250 mg de fentoina
-                double ampollaCC =Double.valueOf(arryMedicamento[4]); //2 oh 5 cc de fentoina
+            if((array_Dosis[3]).equals("mg/kg")){
+                double ampollaMg =Double.valueOf(array_medi[2]); //100 oh 250 mg de fentoina
+                double ampollaCC =Double.valueOf(array_medi[3]); //2 oh 5 cc de fentoina
                 double dosis8 = Double.valueOf(array_Dosis[2]);
                 double dosis9 = Double.valueOf(array_Dosis[4]); //dosis de 24 horas
-                if(medBuscado=="FENITOINA"){
+                if(medBuscado.equals("FENITOINA")){
                     //MG PO KILO DOSIS DE ATAQUE EN 20 MINUTOS
                     double mgKg = (peso*dosis8);
                     //cantidad de ampollas para el peso 2 o 5 cc
@@ -185,12 +191,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-        if (arryMedicamento[3] == "ug/kg/min"){
-            double doMicro = (Double.valueOf(arrayMedicamento[2])*1000);
-            double dosis = Double.valueOf(arryMedicamento[2]);
-            priDosis = ((dosis*peso)*60/(doMicro/cantidad));
-        }
-        if(medBuscado=="FENITOINA"){}else {
+        if(medBuscado.equals("FENITOINA")){}else {
             txtml.setText(""+priDosis);
             txtml2.setText(""+segDosis);
             txtml3.setText(""+terDosis);
