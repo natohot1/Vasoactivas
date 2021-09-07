@@ -202,11 +202,39 @@ public class DBHelper extends SQLiteOpenHelper {
     //QUITAR BLANCOS
 
 
-    //OBTENER SOLO LOS MEDICAMENTOS
-    public String[] todas_medicina() throws SQLException {
+    //OBTENER SOLO LOS NOMBRES DE MEDICAMENTOS
+    public String[] nombresMedicamento() throws SQLException {
         openDB();
         int contador = 0;
         String [] campos = {Droga.CN_nombre};
+        Cursor c = myDataBase.query(
+                Droga.Tabla_droga,
+                campos, null, null, null, null, null
+        );
+        if (c != null) { c.moveToFirst(); }
+        close();
+        int tamcursor = c.getCount();
+        ArrayList<String> sacados = new ArrayList<>();
+        if (c.moveToFirst()){
+            do{
+                sacados.add(c.getString(0));
+            } while (c.moveToNext());
+        }
+        int tamano = sacados.size();
+        String medicamentos[] = new String[tamano];
+        contador = 0;
+        while (contador < (sacados.size())){
+            medicamentos[contador] = sacados.get(contador);
+            contador++;
+        }
+        return medicamentos;
+    }
+
+    //OBTENER SOLO LOS NOMBRES DE MEDICAMENTOS
+    public String[] nombresComerciales() throws SQLException {
+        openDB();
+        int contador = 0;
+        String [] campos = {Droga.CN_comercial};
         Cursor c = myDataBase.query(
                 Droga.Tabla_droga,
                 campos, null, null, null, null, null
