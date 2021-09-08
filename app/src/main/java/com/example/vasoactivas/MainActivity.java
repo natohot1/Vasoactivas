@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         medicamentoPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int antVal, int nuevoVal) {
+                //SACAR EL NOMBRE DE LA DROGA GENERICA
                 medBuscado = array_soloNombresMedicamentos[nuevoVal];
                 comercialBuscado = arrayNombresComerciales[nuevoVal];
                 arrayMedicamento = manager.medicinaComerial(comercialBuscado);
@@ -93,25 +94,25 @@ public class MainActivity extends AppCompatActivity {
                   txtDosis.setText(String.format("2 ug/kg/min"));
                   txtDosis2.setText(String.format("5 ug/kg/min"));
                   txtDosis3.setText(String.format("7 ug/kg/min"));
-                  medBuscado = arrayMedicamento[0];
+                //  medBuscado = arrayMedicamento[0];
               }
               if (dosisNumero == 1){
                   txtDosis.setText(String.format("2 ug/kg/min"));
                   txtDosis2.setText(String.format("20 ug/kg/min"));
                   txtDosis3.setText(String.format(""));
-                  medBuscado = arrayMedicamento[0];
+                 // medBuscado = arrayMedicamento[0];
               }
               if (dosisNumero == 4){
                   txtDosis.setText(String.format("%s", array_noradrenalina[0]));
                   txtDosis2.setText(String.format("%s", array_noradrenalina[1]));
                   txtDosis3.setText(String.format(""));
-                  medBuscado = arrayMedicamento[0];
+                 // medBuscado = arrayMedicamento[0];
               }
               if (dosisNumero == 3){
                   txtDosis.setText(String.format("30 ug/min"));
                   txtDosis2.setText(String.format(""));
                   txtDosis3.setText(String.format(""));
-                  medBuscado = arrayMedicamento[0];
+               //   medBuscado = arrayMedicamento[0];
               }
                 cambiodosis();
                 calcularSegun(array_Dosis);
@@ -256,7 +257,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cambiodosis() {
-        arrayMedicamento = manager.medicina(medBuscado);
         txAtributos.setText(""+ arrayMedicamento[1]+" "+ arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
         txtampolla.setText("AMPOLLA "+ arrayMedicamento[2]+" mg");
     }
