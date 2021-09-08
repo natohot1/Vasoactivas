@@ -172,10 +172,33 @@ public class DBHelper extends SQLiteOpenHelper {
             medici[contador] = c.getString(contador);
             contador++;
         }
-        String interme = medici[2];
-        interme = medici[2];
         return medici;
-
+    }
+    //OBTENER MEDICAMENTO POR NOMBRE COMERCIAL NECESITA EL NOMBRE COMERCIAL
+    public String[] medicinaComerial(String med) throws SQLException {
+        openDB();
+        String medici[] = new String[5];
+        int contador = 0;
+        String selection = Droga.CN_comercial + " = ? ";
+        String selectionArgs[] = new String[]{med};
+        Cursor c = myDataBase.query(
+                "droga",
+                null,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+        if (c != null) {
+            c.moveToFirst();
+        }
+        close();
+        while (contador <= 3) {
+            medici[contador] = c.getString(contador);
+            contador++;
+        }
+        return medici;
     }
     //OBTIENE LAS DOSIS DE LOS MEDICAMENTOS
     public String[] dosis(String med)throws SQLException{
@@ -199,8 +222,6 @@ public class DBHelper extends SQLiteOpenHelper {
         return devol;
 
     }
-    //QUITAR BLANCOS
-
 
     //OBTENER SOLO LOS NOMBRES DE MEDICAMENTOS
     public String[] nombresMedicamento() throws SQLException {

@@ -7,9 +7,9 @@
         <item>NITROGLICERINA</item>
     </string-array>
     <string-array name="arraydopa">
-        <item>2-3 ug/kg/min</item>
-        <item>4-6 ug/kg/min</item>
-        <item>+6 ug/kg/min</item>
+        <item>2 ug/kg/min</item>
+        <item>20 ug/kg/min</item>
+
     </string-array>
     <string-array name="arraynoradrenalina">
         <item>0,05 ug/kg/min</item>

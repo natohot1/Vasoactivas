@@ -9,15 +9,15 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
-    TextView txtml,txtml2,txtml3,textDilusion,texDroga,txtDosis,txtDosis2,txtDosis3,txtTitulo,txtampolla,txAtributos;
+    TextView txtml,txtml2,txtml3,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtTitulo,txtampolla,txAtributos;
     NumberPicker medicamentoPicker, pickerSolvente, pickerPeso;
     String[] array_soloNombresMedicamentos, array_dopaInicio, array_noradrenalina,array_solventes,array_pesos;
-    String medBuscado = "DOPAMINA",micadena;
+    String medBuscado = "DOBUTAMINA",comercialBuscado ="DOBUTAMINA HOSPIRA";
     int dosisNumero,peso,cantidad,cantidadMg,contador, contador2;
     DecimalFormat form = new DecimalFormat("0.0");
     DBHelper manager;
     String arrayMedicamento[] = new String[5];
-    String arrayNombresMedicamentos[], array_Dosis[], arrayNombresComerciales[];
+    String  array_Dosis[], arrayNombresComerciales[];
 
 
     @Override
@@ -30,10 +30,12 @@ public class MainActivity extends AppCompatActivity {
        DBHelper dbHelper = new DBHelper(MainActivity.this);
 
        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        arrayMedicamento = manager.medicina(medBuscado);
+       // ARRAY DEL SOLO EL MEDICAMENTO
+        arrayMedicamento = manager.medicinaComerial(comercialBuscado);
         //listado de solo nombres de medicanentos
-        arrayNombresMedicamentos = manager.nombresMedicamento();
+        array_soloNombresMedicamentos = manager.nombresMedicamento();
         arrayNombresComerciales = manager.nombresComerciales();
+
         array_Dosis  =manager.dosis(medBuscado);
        inicilizar();
        cantidad = 200;
@@ -43,9 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         txAtributos.setText(""+ arrayMedicamento[1]+" "+ arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
         cambiodosis();
-        calcular(peso);
-
-
+        calcularSegun(array_Dosis);
     }
 
     private void inicilizar() {
@@ -53,15 +53,16 @@ public class MainActivity extends AppCompatActivity {
         txtml = findViewById(R.id.textml);
         txtml2 = findViewById(R.id.textml2);
         txtml3 = findViewById(R.id.textml3);
-        texDroga = findViewById(R.id.texDroga);
+        texDrogaTitulo = findViewById(R.id.texDroga);
         txtDosis = findViewById(R.id.texDosis);
         txtDosis2 = findViewById(R.id.texDosis2);
         txtDosis3 = findViewById(R.id.texDosis3);
         txtTitulo = findViewById(R.id.textView2);
         txAtributos = findViewById(R.id.txAmpAtributos);
         txtampolla = findViewById(R.id.txAmpolla);
-        array_soloNombresMedicamentos = arrayNombresMedicamentos;
+
         array_dopaInicio = getResources().getStringArray(R.array.arraydopa);
+
         array_solventes =getResources().getStringArray(R.array.arraysolventes);
         array_noradrenalina = getResources().getStringArray(R.array.arraynoradrenalina);
         medicamentoPicker = findViewById(R.id.numberPicker);
@@ -74,41 +75,43 @@ public class MainActivity extends AppCompatActivity {
         pickerPeso.setDisplayedValues(array_pesos);
         pickerPeso.setValue(60);
 
-        texDroga.setText(String.format("%s", array_soloNombresMedicamentos[medicamentoPicker.getValue()]));
+        texDrogaTitulo.setText(String.format("%s", array_soloNombresMedicamentos[medicamentoPicker.getValue()]));
         txtDosis.setText(String.format("%s", array_dopaInicio[0]));
         txtDosis2.setText(String.format("%s", array_dopaInicio[1]));
-        txtDosis3.setText(String.format("%s", array_dopaInicio[2]));
+        txtDosis3.setText("");
         medicamentoPicker.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
             public void onValueChange(NumberPicker numberPicker, int antVal, int nuevoVal) {
                 medBuscado = array_soloNombresMedicamentos[nuevoVal];
+                comercialBuscado = arrayNombresComerciales[nuevoVal];
+                arrayMedicamento = manager.medicinaComerial(comercialBuscado);
                 array_Dosis = manager.dosis(medBuscado);
-                texDroga.setText(arrayNombresComerciales[nuevoVal]);
+                texDrogaTitulo.setText(arrayNombresComerciales[nuevoVal]);
                 dosisNumero = nuevoVal;
 
               if (dosisNumero == 2){
-                  txtDosis.setText(String.format("%s", array_dopaInicio[0]));
-                  txtDosis2.setText(String.format("%s", array_dopaInicio[1]));
-                  txtDosis3.setText(String.format("%s", array_dopaInicio[2]));
-                  medBuscado = array_soloNombresMedicamentos[0];
+                  txtDosis.setText(String.format("2 ug/kg/min"));
+                  txtDosis2.setText(String.format("5 ug/kg/min"));
+                  txtDosis3.setText(String.format("7 ug/kg/min"));
+                  medBuscado = arrayMedicamento[0];
               }
               if (dosisNumero == 1){
                   txtDosis.setText(String.format("2 ug/kg/min"));
                   txtDosis2.setText(String.format("20 ug/kg/min"));
                   txtDosis3.setText(String.format(""));
-                  medBuscado = array_soloNombresMedicamentos[1];
+                  medBuscado = arrayMedicamento[0];
               }
               if (dosisNumero == 4){
                   txtDosis.setText(String.format("%s", array_noradrenalina[0]));
                   txtDosis2.setText(String.format("%s", array_noradrenalina[1]));
                   txtDosis3.setText(String.format(""));
-                  medBuscado = array_soloNombresMedicamentos[2];
+                  medBuscado = arrayMedicamento[0];
               }
               if (dosisNumero == 3){
                   txtDosis.setText(String.format("30 ug/min"));
                   txtDosis2.setText(String.format(""));
                   txtDosis3.setText(String.format(""));
-                  medBuscado = array_soloNombresMedicamentos[3];
+                  medBuscado = arrayMedicamento[0];
               }
                 cambiodosis();
                 calcularSegun(array_Dosis);
@@ -130,7 +133,8 @@ public class MainActivity extends AppCompatActivity {
                 if (nuevoVal ==4){ cantidad = 500;}
                 if (nuevoVal ==5){ cantidad = 1000; }
                 cambiodosis();
-                calcular(peso);
+                //calcular(peso);
+                calcularSegun(array_Dosis);
             }
         });
         pickerPeso.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
@@ -138,17 +142,19 @@ public class MainActivity extends AppCompatActivity {
             public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
                 peso = newVal;
                 cambiodosis();
-                calcular(peso);
+               // calcular(peso);
+                calcularSegun(array_Dosis);
             }
         });
         }
 
         //CALCULAR SEGUN MEDICAMENTO
     private void calcularSegun(String []array_DosisPasado){
-        txtml.setText("");
-        txtml2.setText("");
-        txtml3.setText("");
-        double ampollaMicroGramos = (Double.valueOf(array_DosisPasado[2]))+1000; //CANRIDAD AMPOLLA EN MICROGRAMOS
+        cantidadMg=Integer.valueOf(arrayMedicamento[2]);
+        txtml.setText(null);
+        txtml2.setText(null);
+        txtml3.setText(null);
+        double ampollaMicroGramos = cantidadMg*1000; //CANRIDAD AMPOLLA EN MICROGRAMOS
         double priDosis = 0;
         double segDosis = 0;
         double terDosis = 0;
@@ -187,29 +193,31 @@ public class MainActivity extends AppCompatActivity {
                     double mgKg24 = (peso*dosis9);
                     //cantidad de ampollas para el peso 2 o 5 cc
                     segDosis = (mgKg24/ampollaMg)*ampollaCC; //dosisAmpollas
-                    txtml.setText(priDosis+" cc, en "+cantidad+" cc de Salino, en 20 minutos");
-                    txtml2.setText(segDosis+" cc, en "+cantidad+" cc de Salino en 24 horas");
+                  //  txtml.setText(priDosis+" cc, en "+cantidad+" cc de Salino, en 20 minutos");
+                  //  txtml2.setText(segDosis+" cc, en "+cantidad+" cc de Salino en 24 horas");
                 }
             }
 
-        if(medBuscado.equals("FENITOINA")){}else {
-            txtml.setText(""+priDosis);
-            txtml2.setText(""+segDosis);
-            txtml3.setText(""+terDosis);
+
+
+        if(medBuscado.equals("FENITOINA")){
+            txtml.setText(priDosis+" cc, en "+cantidad+" cc de Salino, en 20 minutos");
+            txtml2.setText(segDosis+" cc, en "+cantidad+" cc de Salino en 24 horas");
+
+        }else {
+            if(priDosis >0) {
+                txtml.setText(form.format(priDosis) + " ml/hora");
+            }
+            if(segDosis >0) {
+                txtml2.setText(form.format(segDosis) + " ml/hora");
+            }
+            if(terDosis >0) {
+                txtml3.setText(form.format(terDosis) + " ml/hora");
+            }
+
         }
     }
 
-    public int tamanoarray(String[] mio){
-        int devol=0,contador1=0;
-        int contador = mio.length;
-        while (contador1<=contador){
-            if(mio[contador1]!=null){
-                devol++;
-            }
-            contador1++;
-        }
-        return devol;
-    }
 
     private void calcular(int peso) {
         double priDosis = 0;
