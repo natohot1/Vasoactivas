@@ -4,16 +4,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.NumberPicker;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
-    TextView txtml,txtml2,txtml3,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtTitulo,txtampolla,txAtributos;
-    NumberPicker medicamentoPicker, pickerSolvente, pickerPeso;
-    String[] array_soloNombresMedicamentos, array_dopaInicio, array_noradrenalina,array_solventes,array_pesos;
+    TextView txtml,txtml2,txtml3,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtTitulo,txtampolla,txAtributos,txPeso;
+    NumberPicker medicamentoPicker, pickerSolvente;
+    String[] array_soloNombresMedicamentos, array_dopaInicio, array_noradrenalina,array_solventes;
     String medBuscado = "DOBUTAMINA",comercialBuscado ="DOBUTAMINA HOSPIRA";
-    int dosisNumero,peso, cantidadSuero,cantidadMg,contador, contador2;
+    int dosisNumero,peso, peso2, cantidadSuero,cantidadMg;
+    SeekBar seekBar;
     DecimalFormat form = new DecimalFormat("0.0");
     DBHelper manager;
     String arrayMedicamento[] = new String[5];
@@ -40,8 +42,10 @@ public class MainActivity extends AppCompatActivity {
        inicilizar();
        cantidadSuero = 200;
        cantidadMg = 200;
+       txPeso.setText("PESO 60 kg");
 
        peso = 60;
+       peso2 = 60;
 
         txAtributos.setText(""+ arrayMedicamento[1]+" "+ arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
         cambiodosis();
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         txtTitulo = findViewById(R.id.textView2);
         txAtributos = findViewById(R.id.txAmpAtributos);
         txtampolla = findViewById(R.id.txAmpolla);
+        txPeso = findViewById(R.id.txPeso);
 
         array_dopaInicio = getResources().getStringArray(R.array.arraydopa);
 
@@ -69,12 +74,6 @@ public class MainActivity extends AppCompatActivity {
         medicamentoPicker.setMinValue(0);
         medicamentoPicker.setMaxValue(arrayNombresComerciales.length-1);
         medicamentoPicker.setDisplayedValues(arrayNombresComerciales);
-        pickerPeso = findViewById(R.id.pickerPeso);
-        pickerPeso.setMinValue(10);
-        pickerPeso.setMaxValue(200);
-        pickerPeso.setDisplayedValues(array_pesos);
-        pickerPeso.setValue(60);
-
         texDrogaTitulo.setText(String.format("%s", array_soloNombresMedicamentos[medicamentoPicker.getValue()]));
         txtDosis.setText(String.format("%s", array_dopaInicio[0]));
         txtDosis2.setText(String.format("%s", array_dopaInicio[1]));
@@ -87,31 +86,26 @@ public class MainActivity extends AppCompatActivity {
                 comercialBuscado = arrayNombresComerciales[nuevoVal];
                 arrayMedicamento = manager.medicinaComerial(comercialBuscado);
                 array_Dosis = manager.dosis(medBuscado);
-                actualizar();
                 texDrogaTitulo.setText(arrayNombresComerciales[nuevoVal]);
               if (medBuscado.equals("DOPAMINA")){
                   txtDosis.setText(String.format("2 ug/kg/min"));
                   txtDosis2.setText(String.format("5 ug/kg/min"));
                   txtDosis3.setText(String.format("7 ug/kg/min"));
-                //  medBuscado = arrayMedicamento[0];
               }
                 if (medBuscado.equals("DOBUTAMINA")){
                   txtDosis.setText(String.format("2 ug/kg/min"));
                   txtDosis2.setText(String.format("20 ug/kg/min"));
                   txtDosis3.setText(String.format(""));
-                 // medBuscado = arrayMedicamento[0];
               }
                 if (medBuscado.equals("NORADRENALINA")){
                   txtDosis.setText(String.format("%s", array_noradrenalina[0]));
                   txtDosis2.setText(String.format("%s", array_noradrenalina[1]));
                   txtDosis3.setText(String.format(""));
-                 // medBuscado = arrayMedicamento[0];
               }
                 if (medBuscado.equals("NITROGLICERINA")){
                   txtDosis.setText(String.format("ug/min"));
                   txtDosis2.setText(String.format(""));
                   txtDosis3.setText(String.format(""));
-               //   medBuscado = arrayMedicamento[0];
               }
                 if (medBuscado.equals("FENITOINA")){
                   txtDosis.setText(String.format("17 mg/kg"));
@@ -120,7 +114,6 @@ public class MainActivity extends AppCompatActivity {
               }
                 cambiodosis();
                 calcularSegun();
-           //  calcular(peso);
             }
         });
         pickerSolvente = findViewById(R.id.pickerSolvente);
@@ -138,27 +131,35 @@ public class MainActivity extends AppCompatActivity {
                 if (nuevoVal ==4){ cantidadSuero = 500;}
                 if (nuevoVal ==5){ cantidadSuero = 1000; }
                 cambiodosis();
-                //calcular(peso);
                 calcularSegun();
             }
         });
-        pickerPeso.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+
+        seekBar = findViewById(R.id.seekBar);
+        seekBar.setProgress(60);
+        seekBar.setMax(200);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
-                peso = newVal;
+            public void onProgressChanged(SeekBar seekBar, int pesoSek, boolean b) {
+                peso = pesoSek;
                 cambiodosis();
-               // calcular(peso);
                 calcularSegun();
+                txPeso.setText("PESO "+pesoSek+" kg");
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
         }
 
-    private void actualizar() {
 
-    }
 
     //CALCULAR SEGUN MEDICAMENTO
     private void calcularSegun(){
+        peso = seekBar.getProgress();
         String fenitoina24="";
         cantidadMg=Integer.valueOf(arrayMedicamento[2]);
         txtml.setText(null);
