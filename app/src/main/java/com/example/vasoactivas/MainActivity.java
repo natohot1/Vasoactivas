@@ -3,6 +3,7 @@ package com.example.vasoactivas;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -10,7 +11,7 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
-    TextView txtml,txtml2,txtml3,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtTitulo,txtampolla,txAtributos,txPeso;
+    TextView txtml,txtml2,txtml3,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtTitulo,txResumen,txAtributos,txPeso,txePActivo;
     NumberPicker medicamentoPicker, pickerSolvente;
     String[] array_soloNombresMedicamentos, array_dopaInicio, array_noradrenalina,array_solventes;
     String medBuscado = "DOBUTAMINA",comercialBuscado ="DOBUTAMINA HOSPIRA";
@@ -43,11 +44,16 @@ public class MainActivity extends AppCompatActivity {
        cantidadSuero = 200;
        cantidadMg = 200;
        txPeso.setText("PESO 60 kg");
+       txePActivo.setText("");
+       if(medBuscado.equals(arrayMedicamento[1])){ }else {
+           txePActivo.setText(arrayMedicamento[0]);
+       }
 
        peso = 60;
        peso2 = 60;
+        txAtributos.setText("Cada anpolla de "+ arrayMedicamento[1] +"\n contiene " + arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
+        txResumen.setText("Se prepara una solucion con 1 amp de "+arrayMedicamento[1]+" con "+cantidadSuero+" cc. Se pasara a la velosidad de infusion que marque en ml/hora");
 
-        txAtributos.setText(""+ arrayMedicamento[1]+" "+ arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
         cambiodosis();
         calcularSegun();
     }
@@ -63,8 +69,9 @@ public class MainActivity extends AppCompatActivity {
         txtDosis3 = findViewById(R.id.texDosis3);
         txtTitulo = findViewById(R.id.textView2);
         txAtributos = findViewById(R.id.txAmpAtributos);
-        txtampolla = findViewById(R.id.txAmpolla);
+        txResumen = findViewById(R.id.txdResumen);
         txPeso = findViewById(R.id.txPeso);
+        txePActivo = findViewById(R.id.txPActivo);
 
         array_dopaInicio = getResources().getStringArray(R.array.arraydopa);
 
@@ -169,10 +176,14 @@ public class MainActivity extends AppCompatActivity {
         double priDosis = 0;
         double segDosis = 0;
         double terDosis = 0;
+        seekBar.setVisibility(View.VISIBLE);
+        txPeso.setText("PESO "+peso+" kg");
             if((array_Dosis[3]).equals("ug/min")){
                 //DOSIS NITROGLICERINA EMPEZAR A ESTA DOSIS Y SE PUEDE AUMENTYAR HASTA 10 VECES
                 double dosisPorKilo = Double.valueOf(array_Dosis[2]);
                 priDosis = (dosisPorKilo* cantidadSuero)/ampollaMicroGramos;
+                txPeso.setText("");
+                seekBar.setVisibility(View.GONE);
             }
             if((array_Dosis[3]).equals("ug/kg/min")){
                 double dosis = Double.valueOf(array_Dosis[2]);
@@ -229,46 +240,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-    private void calcular(int peso) {
-        double priDosis = 0;
-        double segDosis = 0;
-        double terDosis = 0;
-        if (dosisNumero ==0){
-            priDosis = ((2.5*peso)*60/(200000/ cantidadSuero));
-            segDosis = ((5*peso)*60/(200000/ cantidadSuero));
-            terDosis = ((7*peso)*60/(200000/ cantidadSuero));
-
-        }
-        if (dosisNumero ==1){
-            priDosis = (((2*peso)*60)* cantidadSuero)/(250000);
-            segDosis = (((20*peso)*60)* cantidadSuero)/(250000);
-        }
-        if (dosisNumero ==2){
-            priDosis = ((0.05*peso)*60/(200000/ cantidadSuero));
-            segDosis = ((0.5*peso)*60/(200000/ cantidadSuero));
-        }
-        if (dosisNumero ==3){
-            segDosis = ((30*peso)*60/(200000/ cantidadSuero));
-        }
-        txtml.setText("");
-        txtml2.setText("");
-        txtml3.setText("");
-        if(priDosis >0) {
-            txtml.setText(form.format(priDosis) + " ml/hora");
-        }
-        if(segDosis >0) {
-            txtml2.setText(form.format(segDosis) + " ml/hora");
-        }
-        if(terDosis >0) {
-            txtml3.setText(form.format(terDosis) + " ml/hora");
-        }
-
-    }
-
     private void cambiodosis() {
-        txAtributos.setText(""+ arrayMedicamento[1]+" "+ arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
-        txtampolla.setText("AMPOLLA "+ arrayMedicamento[2]+" mg");
+        txAtributos.setText("Cada anpolla de "+ arrayMedicamento[1] +"\n contiene " + arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
+        txResumen.setText("Se prepara una solucion con 1 amp de "+arrayMedicamento[1]+" con "+cantidadSuero+" cc. Se pasara a la velosidad de infusion que marque en ml/hora");
+        txePActivo.setText("");
+        if(medBuscado.equals(arrayMedicamento[1])){ }else {
+            txePActivo.setText(arrayMedicamento[0]);
+        }
     }
 }
 
