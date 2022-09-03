@@ -11,7 +11,7 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity {
-    TextView txtml,txtml2,txtml3,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtTitulo,txResumen,txAtributos,txPeso,txePActivo;
+    TextView txtml,txtml2,txtml3, txtml4,textDilusion, texDrogaTitulo,txtDosis,txtDosis2,txtDosis3,txtDosis4,txtTitulo,txResumen,txAtributos,txPeso,txePActivo;
     NumberPicker medicamentoPicker, pickerSolvente;
     String[] array_soloNombresMedicamentos, array_dopaInicio, array_noradrenalina,array_solventes;
     String medBuscado = "DOBUTAMINA",comercialBuscado ="DOBUTAMINA HOSPIRA";
@@ -63,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
         txtml = findViewById(R.id.textml);
         txtml2 = findViewById(R.id.textml2);
         txtml3 = findViewById(R.id.textml3);
+        txtml4 = findViewById(R.id.textml4);
         texDrogaTitulo = findViewById(R.id.texDroga);
         txtDosis = findViewById(R.id.texDosis);
         txtDosis2 = findViewById(R.id.texDosis2);
         txtDosis3 = findViewById(R.id.texDosis3);
+        txtDosis4 = findViewById(R.id.texDosis4);
         txtTitulo = findViewById(R.id.textView2);
         txAtributos = findViewById(R.id.txAmpAtributos);
         txResumen = findViewById(R.id.txdResumen);
@@ -116,8 +118,9 @@ public class MainActivity extends AppCompatActivity {
               }
                 if (medBuscado.equals("FENITOINA")){
                   txtDosis.setText(String.format("17 mg/kg"));
-                  txtDosis2.setText(String.format("6 mg/kg/24 h"));
-                  txtDosis3.setText(String.format(""));
+                  txtDosis2.setText(String.format(""));
+                  txtDosis3.setText(String.format("6 mg/kg/24 h"));
+                  txtDosis4.setText("");
               }
                 cambiodosis();
                 calcularSegun();
@@ -224,7 +227,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(medBuscado.contains("FENITOINA")){
             txtml.setText(form.format(priDosis)+" ampollas, en "+ cantidadSuero +" cc de Salino, en 20 minutos");
-            txtml2.setText(fenitoina24);
+            txtml2.setText("Dosis CARGA ESTATUS EPILEPTICO");
+            txtml3.setText(fenitoina24);
+            txtml4.setText("desaro---------");
 
         }else {
             if(priDosis >0) {
@@ -241,11 +246,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cambiodosis() {
-        txAtributos.setText("Cada anpolla de "+ arrayMedicamento[1] +"\n contiene " + arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
+        txAtributos.setText("Cada ampolla de "+ arrayMedicamento[1] +"\n contiene " + arrayMedicamento[2]+" mg en "+ arrayMedicamento[3]+" ml");
         txResumen.setText("Se prepara una solucion con 1 amp de "+arrayMedicamento[1]+" con "+cantidadSuero+" cc. Se pasara a la velosidad de infusion que marque en ml/hora");
         txePActivo.setText("");
         if(medBuscado.equals(arrayMedicamento[1])){ }else {
             txePActivo.setText(arrayMedicamento[0]);
+        }
+        if(medBuscado.contains("FENITOINA")){
+            txResumen.setText("Dosis de ataque   formatera dosis");
         }
     }
 }
